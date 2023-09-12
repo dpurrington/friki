@@ -3,23 +3,29 @@ import * as fs from 'node:fs/promises'
 import { Article } from './types'
 import * as process from 'process'
 
-// TODO: figure out where this actually is post deployment
-// or move it to an env var
-const ARTICLE_DATA_PATH = `${__dirname}./articles`
-
 function getArticlePath(id: string) {
-  return path.join(process.env.data as string, 'articles', `${id}.md`)
+  return path.join(process.env.data as string, 'articles', `${id}.json`)
 }
 
 export async function saveArticle(article: Article): Promise<void> {
+  console.log('saving article')
   const fp = getArticlePath(article.id)
-  return fs.writeFile(fp, 'utf-8')
+  return fs.writeFile(fp, JSON.stringify(article), 'utf-8')
 }
 
-export async function getArticle(articleId: string): Promise<Article> {
+export async function getArticle(articleId: string): Promise<Article | null> {
   const fp = getArticlePath(articleId)
   // NOTE: this a temporary persistence layer, reading a file
   // like this can be dangerous b/c you don't know how big the file is.
-  const content = await fs.readFile(fp)
-  return { id: articleId, content: content.toString('utf-8') }
+  // NOTE: we trust this location. If for some reason we change our minds about this,
+  // we will have to be a lot more defensive here
+  try {
+    return JSON.parse((await fs.readFile(fp)).toString())
+  } catch (e: any) {
+    if (e.code === 'ENOENT') {
+      return null
+    }
+    // TODO: this method of rethrowing loses stack info. Can it be done better?
+    throw e
+  }
 }
