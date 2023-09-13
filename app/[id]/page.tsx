@@ -26,27 +26,29 @@ export default async function Page(props: {
   }
 
   return (
-    <div id="article">
-      <div id="articleHeader" className="border-2 w-[75vw]">
-        <div id="title" className="text-3xl inline-block border-2">
-          <h1 className="font-bold">{article.title}</h1>
-        </div>
-        <ControlButtons id={article.id} mode={mode} />
-        <hr />
+    <div
+      id="article"
+      className="grid"
+      style={{ gridTemplateColumns: '90% 10%' }}
+    >
+      <div id="title" className="text-3xl border-2">
+        <h1 className="font-bold">{article.title}</h1>
       </div>
-      <PageContent article={article} mode={mode} />
+      <ControlButtons id={article.id} mode={mode} />
+      <hr />
+      <PageContent className="col-span-2" article={article} mode={mode} />
     </div>
   )
 }
 
 async function ControlButtons(props: { id: string; mode: Mode }) {
-  return (
-    <div className="flex justify-end border-2">
-      <div id="editLink">
-        <Link className="btn" href={`/${props.id}?mode=Edit`}>
-          Edit
-        </Link>
-      </div>
+  return props.mode === Mode.Edit ? (
+    <div></div>
+  ) : (
+    <div id="editLink">
+      <Link className="btn" href={`/${props.id}?mode=Edit`}>
+        Edit
+      </Link>
     </div>
   )
 }
@@ -66,19 +68,20 @@ async function PageContent(props: any) {
 
   if (props.mode === Mode.Edit) {
     return (
-      <div>
+      <div className="col-span-2">
         <form action={update}>
           <div>
             <input
               type="text"
               defaultValue={props.article.title}
               name="title"
+              className="input input-bordered w-full max-w-xs"
             />
           </div>
           <textarea
             defaultValue={props.article.content}
             name="content"
-            className="textarea textarea-bordered w-[78vw] h-[80vh] p-3"
+            className="textarea textarea-bordered min-w-full h-[80vh] mt-2"
           />
           <EditingControlButtons id={props.article.id} />
         </form>
@@ -87,7 +90,7 @@ async function PageContent(props: any) {
   }
 
   return (
-    <div className="prose">
+    <div className="prose col-span-2">
       <ReactMarkdown>{props.article.content}</ReactMarkdown>
     </div>
   )
@@ -102,19 +105,6 @@ enum ButtonType {
 enum Mode {
   View,
   Edit,
-}
-
-function classForButton(buttonType: ButtonType, mode: Mode) {
-  // this list should be exhaustive
-  switch (buttonType) {
-    case ButtonType.Edit:
-      return mode === Mode.View ? '' : 'hidden'
-    case ButtonType.Save:
-    case ButtonType.Cancel:
-      return mode === Mode.Edit ? '' : 'hidden'
-    default:
-      throw `Unexpected button type encountered: ${buttonType}`
-  }
 }
 
 async function EditingControlButtons(props: { id: string }) {

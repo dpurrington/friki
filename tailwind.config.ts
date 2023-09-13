@@ -8,6 +8,16 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      gridRowStart: {
+        '8': '8',
+        '9': '9',
+        '10': '10',
+      },
+      gridRowEnd: {
+        '8': '8',
+        '9': '9',
+        '10': '10',
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
