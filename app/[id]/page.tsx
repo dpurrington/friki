@@ -26,12 +26,19 @@ async function ViewPage({ params }: { params: { id: string } }) {
   if (article === null) return notFound()
 
   return (
-    <div id="app">
-      <div id="title" className="article-title">
-        <h1>{article.title}</h1>
+    <div id="article" className="px-8 py-3">
+      <div className="border-2 flex">
+        <div id="title" className="text-4xl w-[85vw]">
+          <h1 className="font-bold">{article.title}</h1>
+        </div>
+        <div>
+          <Link href={`/${params.id}?mode=edit`}>Edit</Link>
+        </div>
+        <hr />
       </div>
-      <ReactMarkdown>{article.content}</ReactMarkdown>
-      <Link href={`/${params.id}?mode=edit`}>Edit</Link>
+      <div className="prose">
+        <ReactMarkdown>{article.content}</ReactMarkdown>
+      </div>
     </div>
   )
 }
@@ -57,12 +64,12 @@ async function EditPage({ params }: { params: { id: string } }) {
 
   return (
     <div id="app">
-      <div id="title" className="article-title">
-        <h1>{article.title}</h1>
+      <div id="title" className="text-6xl">
+        <h1 className="text-6xl">{article.title}</h1>
       </div>
       <form action={update}>
         <div>
-        <input type="text" defaultValue={article.title} name="title" />
+          <input type="text" defaultValue={article.title} name="title" />
         </div>
         <textarea
           defaultValue={article.content}
@@ -72,10 +79,9 @@ async function EditPage({ params }: { params: { id: string } }) {
           cols={120}
         />
         <div>
-        <input type="submit" value="Save" />
+          <input type="submit" value="Save" />
         </div>
       </form>
-      <ReactMarkdown>{article.content}</ReactMarkdown>
       <a href={`/${params.id}`}>Cancel Changes</a>
     </div>
   )
