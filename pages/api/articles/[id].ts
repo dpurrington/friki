@@ -14,7 +14,9 @@ export default async function handler(
     case 'GET':
       try {
         const article = await db.getArticle(id)
-        res.status(200).json(article)
+        if (!!article) {
+          res.status(200).json(article)
+        }
       } catch (e: any) {
         if (e.code === 'ENOENT') res.status(404).end()
         else {
